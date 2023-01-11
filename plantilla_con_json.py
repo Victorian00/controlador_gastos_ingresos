@@ -4,7 +4,8 @@ import json
 from datetime import date
 from datetime import datetime
 
-path = str(os.getcwd())
+path_archivo_python = str(__file__)
+path = path_archivo_python.rsplit('/',1)[0]
 print(path)
 
 dia_actual = date.today()
@@ -17,13 +18,12 @@ print(localizador_referencia)
 today = '{dia}-{numero}'.format(dia=dias[dia_actual.weekday()], numero=fecha_actual.day)
 
 # Abrimos el JSON
-json_file = '/home/srm-d51/Desktop/Python/gastos_y_ahorros/{name}.json'.format(name=localizador_referencia)
+json_file = '{path}/{name}.json'.format(path=path,name=localizador_referencia)
 json_name = '{name}.json'.format(name=localizador_referencia)
 json_exist = False
 
-list_files = os.listdir('/home/srm-d51/Desktop/Python/gastos_y_ahorros')
+list_files = os.listdir(path)
 for file in list_files:
-    print(file)
     if file == json_name:
         json_exist = True
 
@@ -78,7 +78,7 @@ for mes in data:
             data[mes]['Gastos'] = {}
         while gastos == True:
             respuesta = input('¿Quieres introducir gasto? (si/no) ')
-            if respuesta.find('o') == -1:
+            if respuesta == 'si':
                 already_day = False
                 for day in data[mes]['Gastos']:
                     if day == today:
@@ -256,7 +256,38 @@ for mes in data:
             elif pregunta == 'no':
                 hacer_pregunta = False
 
+print('------------------------------------------------------------------------')
 
+
+
+
+
+#################################################
+# Añadimos la seccion anual
+
+for seccion in data:
+    if seccion == 'Balance Anual':
+        already_anual = True
+        break
+    else:
+        already_anual = False
+
+if already_anual != True:
+    data['Balance Anual'] = {}
+
+gastos_anuales = 0
+ingresos_anuales = 0
+for mes in data:
+    for elemento in data[mes]:
+        if elemento == 'Balance':
+            gastos_anuales = gastos_anuales + data[mes]['Balance']['Gastos totales']
+            ingresos_anuales = ingresos_anuales + data[mes]['Balance']['Ingresos totales']
+            break
+
+diferencia_anual = ingresos_anuales - gastos_anuales
+data['Balance Anual']['Gastos anuales totales'] = gastos_anuales
+data['Balance Anual']['Ingresos anuales totales'] = ingresos_anuales
+data['Balance Anual']['Diferencia anual'] = diferencia_anual
 
 
 # Guardamos el JSON

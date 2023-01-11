@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Gastos</title>
+	<link rel="icon" type="image/png" href="https://www.crunchydata.com/favicon.png">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+	<style>
+		body {
+			font-family: sans-serif;
+		}
+
+		a {
+			color: blue;
+			text-decoration: none;
+		}
+
+		a:hover,
+		a:focus {
+			text-decoration: underline;
+		}
+
+		hr {
+			margin-left: -10px;
+			margin-right: -10px;
+		}
+
+		h3 {
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+		}
+
+		h4 {
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+		}
+
+		.page-title {
+			font-size: 16pt;
+			color: white;
+			padding: 6px;
+			background-color: #0167B4;
+			margin: -10px -10px 0px -10px;
+			padding: 10px 0px 10px 16px;
+		}
+
+		.tbl-props {
+			border: 1px solid lightgrey;
+			font-size: 12px;
+			border-spacing: 3px;
+		}
+
+		.tbl-props tr:nth-child(even) {
+			background-color: #EEE;
+		}
+
+		.coll-title {
+			font-weight: bold;
+			padding-right: 10px
+		}
+
+		.json-link {
+			font-size: 12px;
+			background-color: lightgray;
+			color: blue;
+			padding: 2px 8px 2px 8px;
+			border-radius: 10px;
+		}
+
+		.view-link {
+			font-size: 12px;
+			background-color: white;
+			color: blue;
+			padding: 1px 8px 1px 8px;
+			border: 1px solid black;
+			border-radius: 10px;
+		}
+
+		.coll-desc {
+			font-style: italic;
+			font-size: 11pt;
+			margin-top: 4px;
+		}
+
+		.coll-title {
+			font-weight: italic;
+			text-align: end;
+			vertical-align: top;
+			padding-right: 10px;
+		}
+
+		.prop-name {
+			font-family: monospace;
+		}
+
+		.crumbs {
+			font-size: 12pt;
+			margin: 6px;
+		}
+
+		.section-title {
+			font-size: 10pt;
+			font-weight: bold;
+			text-align: right;
+		}
+
+		.param-title {
+			margin-left: 10px;
+			font-size: 10pt;
+			text-align: right;
+		}
+	</style>
+</head>
+
+
+<body style='margin: 10px;'>
+	<header>
+		<div class='page-title'>
+			<span style='color:white'>Gastos e Ingresos</span>
+			<span style='font-size: 10px; font-style: italic; margin-left: 20px'>Victoriano - Version 1.0.0</span>
+		</div>
+	</header>
+
+
+    <p></p>
+
+	<p>
+		<h2>Día</h2>
+		<input type="radio" name="dia" id="today" value="today" checked/>Hoy
+		<input type="radio" name="dia" id="another_day" value="another_day" />Otro dia
+		<p></p>
+		<label id="mensaje_hoy" style="color: red;" style="display: none" >Se apuntará en el día de hoy</label>
+		<label id="mensaje_otro_dia" style="display: none">Apuntar en el día </label><input type="date" name="dia_concreto" id="dia_concreto" />
+	</p>
+
+
+	<h2>Sueldo</h2>
+    <label> Sueldo percibido este mes </label><input type="text" id="sueldo" name="sueldo" placeholder="€"></input>
+    <p></p>
+	<h2>Gastos</h2>
+	<p></p>
+    <label> Concepto </label><select name="concepto_gastos" id="concepto_gastos">
+		<option value="">-Seleccionar-</option>
+		<option value="Alquiler">Alquiler</option>
+		<option value="Compra Mercadona">Compra Mercadona</option>
+		<option value="Añadir">- Añadir concepto -</option>
+	</select>
+	<label id="nuevo_concepto" style="display: none">Nuevo concepto </label><input type="text" id="otro_concepto_gastos" name="otro_concepto_gastos" style="display: none"></input>
+	<p></p>
+	<label id="categoria">Categoría </label><select name="categoria_gastos" id="categoria_gastos">
+		<option value="">-Seleccionar-</option>
+		<option value="Compras supermercado">Compras supermercado</option>
+		<option value="Piso">Piso</option>
+		<option value="Añadir">- Añadir categoria -</option>
+	</select>
+	<label id="nueva_categoria" style="display: none">Nueva categoria </label><input type="text" id="otra_categoria_gastos" name="otra_categoria_gastos" style="display: none"></input>
+	<p></p>
+	<label> Importe </label><input type="text" id="importe_gastos" name="importe_gastos" placeholder="€"></input>
+    <p></p>
+    <button>AÑADIR</button>
+
+	<p></p>
+
+    <script>
+
+		var today = document.getElementById('today')
+		var another_day = document.getElementById('another_day')
+		var dia_concreto = document.getElementById("dia_concreto")
+		var sueldo = document.getElementById("sueldo")
+		var concepto_gastos = document.getElementById("concepto_gastos")
+		var otro_concepto_gastos = document.getElementById("otro_concepto_gastos")
+		var categoria_gastos = document.getElementById("categoria_gastos")
+		var otra_categoria_gastos = document.getElementById("otra_categoria_gastos")
+		var importe_gastos = document.getElementById("importe_gastos")
+
+		function onChange() {
+			var dia_concreto_val = dia_concreto.value
+			var sueldo_val = sueldo.value
+			var concepto_gastos_val = concepto_gastos.value
+			var otro_concepto_gastos_val = otro_concepto_gastos.value
+			var categoria_gastos_val = categoria_gastos.value
+			var otra_categoria_gastos_val = otra_categoria_gastos.value
+			var importe_gastos_val = importe_gastos.value
+
+			let day, month, year
+			let pasar_dia, pasar_gasto, pasar_categoria
+			
+			if (concepto_gastos_val == 'Añadir') {
+				document.getElementById("otro_concepto_gastos").style.display = "inline";
+				document.getElementById("nuevo_concepto").style.display = "inline";
+				pasar_gasto = otro_concepto_gastos_val
+			} else {
+				document.getElementById("otro_concepto_gastos").style.display = "none";
+				document.getElementById("nuevo_concepto").style.display = "none";
+				pasar_gasto = concepto_gastos_val
+			}
+
+			if (categoria_gastos_val == 'Añadir') {
+				document.getElementById("otra_categoria_gastos").style.display = "inline";
+				document.getElementById("nueva_categoria").style.display = "inline";
+				pasar_categoria = otra_categoria_gastos_val
+			} else {
+				document.getElementById("otra_categoria_gastos").style.display = "none";
+				document.getElementById("nueva_categoria").style.display = "none";
+				pasar_categoria = categoria_gastos_val
+			}
+
+			if (today.checked){
+				document.getElementById("mensaje_hoy").style.display = "inline";
+				document.getElementById("mensaje_otro_dia").style.display = "none";
+				document.getElementById("dia_concreto").style.display = "none";
+				pasar_dia = ''
+			} else if (another_day.checked) {
+				document.getElementById("mensaje_hoy").style.display = "none";
+				document.getElementById("mensaje_otro_dia").style.display = "inline";
+				document.getElementById("dia_concreto").style.display = "inline";
+				var array_fecha = dia_concreto_val.split('-')
+				if (array_fecha.length == 3){
+					year = array_fecha[0]
+					month = array_fecha[1]
+					day_aux = array_fecha[2]
+				}
+				pasar_dia = dia_concreto_val
+			}
+
+			data_to_python = {"user": "TEST", "sueldo": sueldo_val, "dia": pasar_dia, "concepto_gasto": pasar_gasto, 
+			                  "categoria_gasto": pasar_categoria,"valor_gasto": importe_gastos_val}
+			
+		}
+		today.onchange = onChange
+		another_day.onchange = onChange
+		dia_concreto.onchange = onChange
+		sueldo.onchange = onChange
+		concepto_gastos.onchange = onChange
+		otro_concepto_gastos.onchange = onChange
+		categoria_gastos.onchange = onChange
+		otra_categoria_gastos.onchange = onChange
+		importe_gastos.onchange = onChange
+		onChange()
+
+		$(document).ready(function () {
+			$("button").click(function () {
+				console.log(data_to_python)
+			});
+		});
+
+    </script>
+
+    <h1 id="demo"></h1>
+
+</body>
+
+</html>
